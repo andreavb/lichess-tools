@@ -1,0 +1,62 @@
+// ==UserScript==
+// @name         Lichess – Bloquear usuário no chat (focado em mchat__content)
+// @namespace    lichess-block-chat-user
+// @version      1.1
+// @description  Esconde mensagens de usuários específicos no chat de torneio do lichess
+// @match        https://lichess.org/*
+// @run-at       document-idle
+// @grant        none
+// ==/UserScript==
+
+(() => {
+  "use strict";
+
+  // Nome(s) a bloquear (sempre em minúsculas)
+  const blockedUsers = ["USUARIO_1", "USUARIO_2", "USUARIO_3];
+
+  // Local onde as mensagens aparecem
+  const chatContainerSelector = ".mchat__content.discussion";
+
+  // Função para verificar e ocultar mensagens
+  function filterMessages(container) {
+    if (!container) return;
+    const messages = container.querySelectorAll(".msg, .message, li, div"); // ajusta se precisar
+    messages.forEach(msg => {
+      if (msg.dataset.__blockedByUserScript === "1") return;
+
+      const txt = (msg.textContent || "").trim().toLowerCase();
+      if (!txt) return;
+
+      // se o texto começa com o nome do usuário bloqueado + ":" → esconder
+      for (const user of blockedUsers) {
+        if (txt.startsWith(user.toLowerCase())) {
+          msg.style.display = "none";
+          msg.dataset.__blockedByUserScript = "1";
+        }
+      }
+    });
+  }
+
+  // Inicia observador no container do chat
+  function initObserver() {
+    const container = document.querySelector(chatContainerSelector);
+    if (!container) return;
+
+    filterMessages(container);
+
+    const observer = new MutationObserver(() => {
+      filterMessages(container);
+    });
+
+    observer.observe(container, { childList: true, subtree: true });
+  }
+
+  // Espera o container aparecer
+  const checkInterval = setInterval(() => {
+    const container = document.querySelector(chatContainerSelector);
+    if (container) {
+      clearInterval(checkInterval);
+      initObserver();
+    }
+  }, 1000);
+})();
