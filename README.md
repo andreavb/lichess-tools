@@ -13,6 +13,6 @@ Instruções
 
    4.4. Fazer quaisquer modificações necessárias/desejadas (exemplo: em "block_user_in_tournament_chat", modificar a linha 15 para incluir os nicks a serem bloqueados).
 
-   4.5. Salvar as alterações (File -> Save to disk).
+   4.5. Salvar as alterações (File -> Save).
 
    4.6. Fechar/abrir o navegador para que as alterações sejam aplicadas.
